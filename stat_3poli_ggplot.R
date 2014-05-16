@@ -209,7 +209,6 @@ sbjsx<-ddply(lstpoli, .(sbj,call), summarise,
               type= levels(factor(sbjtype)),
               npart= length(sbj),
               numprj= length(levels(factor(prj))),
-              numsbj= length(levels(factor(polo))),
               totinv= sum(invest),
               meaninv=mean(invest),
               totfin= sum(fin),
@@ -217,36 +216,38 @@ sbjsx<-ddply(lstpoli, .(sbj,call), summarise,
 )
 str(sbjsx)
 head(sbjsx)
+sbjsx$sbj[sbjsx$numprj>1]
 
-sbjsx<-ddply(lstpoli, .(sbj,call), summarise,
+
+typesx<-ddply(lstpoli, .(sbjtype,call), summarise,
              type= levels(factor(sbjtype)),
              npart= length(sbj),
              numprj= length(levels(factor(prj))),
-             numsbj= length(levels(factor(polo))),
+             numsbj= length(levels(factor(sbj))),
              totinv= sum(invest),
              meaninv=mean(invest),
              totfin= sum(fin),
              meanfin=mean(fin)
 )
-str(sbjsx)
-head(sbjsx)
+str(typesx)
+head(typesx)
+sum(typesx$npart)
 
-
-p1 <-qplot(type,npart, data=sbjsx, fill=type, 
+p1 <-qplot(type,npart, data=typesx, fill=call, 
            geom="bar", stat="identity",  
-           main=" total participations sbj",  ylab="")
+           main=" n. participation per type",  ylab="")
 
-p2 <-qplot(type, numprj, data=sbjsx, fill=type, 
+p2 <-qplot(type, numprj, data=typesx, fill=call, 
            geom="bar",stat="identity" ,  
-           main=" n. projects sbj",  ylab="")
+           main=" n. projects per type",  ylab="")
 
-p3 <-qplot(type, numsbj, data=sbjsx, fill=type, 
+p3 <-qplot(type, numsbj, data=typesx, fill=call, 
            geom="bar",stat="identity",  
-           main=" n. subjects sbj" ,  ylab="")
+           main=" n. subjects per type" ,  ylab="")
 
-p4<-qplot(type,totfin/1000000, data=sbjsx, fill=type, 
+p4<-qplot(type,totfin/1000000, data=typesx, fill=call, 
           geom="bar", stat="identity" ,  
-          main=" total funding sbj",  ylab="Meuro")
+          main=" total funding per type",  ylab="Meuro")
 
 
 jpeg("basic_stat6.jpg",width = 600, height = 900, units = "px")
@@ -254,26 +255,27 @@ jpeg("basic_stat6.jpg",width = 600, height = 900, units = "px")
 # par(mfrow=c(3,1)) 
 # setup multi plot with grid
 
-vp.setup(3,1)
+vp.setup(4,1)
 # plot graphics into layout
-print(p2, vp=vp.layout(1,1))
-print(p3, vp=vp.layout(2,1))
-print(p4, vp=vp.layout(3,1))
+print(p1, vp=vp.layout(1,1))
+print(p2, vp=vp.layout(2,1))
+print(p3, vp=vp.layout(3,1))
+print(p4, vp=vp.layout(4,1))
 
 dev.off()
 
 
-p1 <-qplot(type, numprj, data=sbjsx, fill=call, 
+p1 <-qplot(type, numprj, data=typesx, fill=call, 
            facets= call~., show_guide = FALSE,
            geom="bar",stat="identity" ,  
            main=" n. projects in type",  ylab="")
 
-p2 <-qplot(type, numsbj, data=sbjsx, fill=call, 
+p2 <-qplot(type, numsbj, data=typesx, fill=call, 
            facets= call~., show_guide = FALSE,
            geom="bar",stat="identity",  
            main=" n. subjects in type" ,  ylab="")
 
-p3<-qplot(type,totfin/1000000, data=sbjsx, fill=call, 
+p3<-qplot(type,totfin/1000000, data=typesx, fill=call, 
           facets= call~., show_guide = FALSE,
           geom="bar", stat="identity" ,  
           main=" total funding in type",  ylab="Meuro")
@@ -293,15 +295,15 @@ print(p3, vp=vp.layout(3,1))
 
 dev.off()
 
-p1<-qplot(type, meanfin/1000000, data=sbjsx, fill=call, 
+p1<-qplot(type, meanfin/1000000, data=typesx, fill=call, 
           facets= call~., show_guide = FALSE,
           geom="bar", stat="identity",  
-          main=" mean funding in sbj",  ylab="Meuro")
+          main=" mean funding in type",  ylab="Meuro")
 
-p2<-qplot(sbjtype, fin/1000000, data=listpoli, fill=call, 
+p2<-qplot(type, totfin/1000000, data=typesx, fill=call, 
           facets= call~., show_guide = FALSE,
           geom="boxplot",  
-          main=" funding distribution in sbj",  ylab="Meuro")
+          main=" funding distribution in type",  ylab="Meuro")
 
 jpeg("basic_stat8.jpg",width = 600, height = 900, units = "px")
 # pdf("polo_call1.pdf",paper=c("a4"))
