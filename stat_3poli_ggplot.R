@@ -11,7 +11,14 @@ colnames(listpoli)<-c("prj",  "sbj",    "polo",
                       "invest",	"fin",	"call")
 head(listpoli)
 str(listpoli)
+levels(listpoli$call)<-c("1^","2^","3^")
 
+attrsbj<-read.table("attr_sbj.txt",sep="", 
+                    header=T, dec=",", stringsAsFactors=F)
+head(attrsbj)
+str(attrsbj)
+
+#################################################################
 qplot(polo, data=listpoli, fill=call)
 
 #poloprj<- sapply(levels(listpoli$polo), 
@@ -112,38 +119,6 @@ print(p4, vp=vp.layout(4,1))
 
 dev.off()
 
-
-
-p1<-qplot(polo,totinv/1000000, data=polosx, fill=call, 
-      geom="bar", stat="identity",  
-      main=" total investment in POLI" ,  ylab="Meuro")
-
-p2<-qplot(polo,totinv/1000000, data=polosx, fill=call, 
-         facets= call~., show_guide = FALSE,
-         geom="bar", stat="identity" ,  
-      main=" total investment in POLI",  ylab="Meuro")
-
-p3<-qplot(polo, meaninv/1000000, data=polosx, fill=call, 
-      facets= call~., show_guide = FALSE,
-      geom="bar", stat="identity",  
-      main=" mean investment in POLI",  ylab="Meuro")
-
-
-jpeg("basic_stat2.jpg",width = 600, height = 900, units = "px")
-# pdf("polo_call1.pdf",paper=c("a4"))
-# par(mfrow=c(3,1)) 
-# setup multi plot with grid
-
-vp.setup(3,1)
-# plot graphics into layout
-print(p1, vp=vp.layout(1,1))
-print(p2, vp=vp.layout(2,1))
-print(p3, vp=vp.layout(3,1))
-
-dev.off()
-
-
-
 p1<-qplot(polo, meanfin/1000000, data=polosx, fill=call, 
           facets= call~., show_guide = FALSE,
           geom="bar", stat="identity",  
@@ -165,4 +140,69 @@ print(p1, vp=vp.layout(1,1))
 print(p2, vp=vp.layout(2,1))
 
 dev.off()
+
+###########################################################
+
+head(listpoli)
+hist(table(listpoli$sbj), breaks=100)
+table(table(listpoli$sbj))
+
+
+sbjtype<-sapply(listpoli$sbj, function (x) attrsbj$type[attrsbj$sbj==x]  ) 
+
+#  mytype<-lapply(listpoli$sbj, function (x) attrsbj[attrsbj$sbj==x,]  ) 
+str(sbjtype)
+
+lstpoli<-cbind(listpoli,sbjtype)
+head(lstpoli)
+str(lstpoli)
+
+
+p1<-qplot(sbjtype, data=lstpoli, fill=call, 
+      main=" participation per type ",  ylab="n. participations")
+
+p2<-qplot(sbjtype, data=lstpoli, fill=call, 
+      facets= call~., show_guide = FALSE,
+      main=" participation per type ",  ylab="n. participations")
+
+jpeg("basic_stat4.jpg",width = 600, height = 900, units = "px")
+# setup multi plot with grid
+
+vp.setup(3,1)
+# plot graphics into layout
+print(p1, vp=vp.layout(1,1))
+print(p2, vp=vp.layout(2:3,1))
+
+dev.off()
+
+
+
+p1<-qplot(sbjtype, fin/1000000, data=lstpoli, fill=sbjtype, 
+      geom="boxplot",  show_guide = FALSE,
+      main=" funding distribution for type",  ylab="Meuro")
+
+p2<-qplot(sbjtype, fin/1000000, data=lstpoli, fill=call, 
+      geom="boxplot",  
+      main=" funding distribution for type",  ylab="Meuro")
+
+p3<-qplot(sbjtype, fin/1000000, data=lstpoli, fill=call, 
+      facets= call~., show_guide = FALSE,
+      geom="boxplot",  
+      main=" funding distribution for type",  ylab="Meuro")
+
+jpeg("basic_stat5.jpg",width = 600, height = 900, units = "px")
+# pdf("polo_call1.pdf",paper=c("a4"))
+# par(mfrow=c(3,1)) 
+# setup multi plot with grid
+
+vp.setup(4,1)
+# plot graphics into layout
+print(p1, vp=vp.layout(1,1))
+print(p2, vp=vp.layout(2,1))
+print(p3, vp=vp.layout(3:4,1))
+
+dev.off()
+
+
+
 
