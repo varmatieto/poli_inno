@@ -295,25 +295,26 @@ print(p3, vp=vp.layout(3,1))
 
 dev.off()
 
-p1<-qplot(type, meanfin/1000000, data=typesx, fill=call, 
-          facets= call~., show_guide = FALSE,
-          geom="bar", stat="identity",  
-          main=" mean funding in type",  ylab="Meuro")
+##############################################################
 
-p2<-qplot(type, totfin/1000000, data=typesx, fill=call, 
-          facets= call~., show_guide = FALSE,
-          geom="boxplot",  
-          main=" funding distribution in type",  ylab="Meuro")
+
+p1<-qplot(invest,fin, data=lstpoli, color=sbjtype,
+      geom="point", size=2,
+      main=" funding/investment ratio distribution ")
+
+p2<-qplot(sbjtype, fin/invest,  data=lstpoli, fill=sbjtype, 
+    geom="boxplot", 
+      main=" funding/investment ratio distribution ")
+
 
 jpeg("basic_stat8.jpg",width = 600, height = 900, units = "px")
 # pdf("polo_call1.pdf",paper=c("a4"))
 # par(mfrow=c(3,1)) 
 # setup multi plot with grid
-
-vp.setup(3,1)
+vp.setup(2,1)
 # plot graphics into layout
 print(p1, vp=vp.layout(1,1))
-print(p2, vp=vp.layout(2:3,1))
+print(p2, vp=vp.layout(2,1))
 
 dev.off()
 
