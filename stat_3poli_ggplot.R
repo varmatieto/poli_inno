@@ -5,7 +5,7 @@ library (plyr)
 library(grid)
 
 
-listpoli<-read.table("poli_123.txt",sep="", header=T, dec=",")
+listpoli<-read.table("poli_123.txt",header=T, dec=",")
 
 colnames(listpoli)<-c("prj",  "sbj",    "polo",	
                       "invest",	"fin",	"call")
@@ -13,7 +13,7 @@ head(listpoli)
 str(listpoli)
 levels(listpoli$call)<-c("1^","2^","3^")
 
-attrsbj<-read.table("attr_sbj.txt",sep="", 
+attrsbj<-read.table("attr_sbj.txt",
                     header=T, dec=",", stringsAsFactors=F)
 head(attrsbj)
 str(attrsbj)
@@ -38,6 +38,21 @@ str(polosx)
 head(polosx)
 
 
+qplot(numsbj,numprj, data=polosx, color=call, 
+      geom=c("point", "smooth"), method="lm",
+      facets= call~., show_guide = FALSE,
+      main=" n.subjects per n.projects")
+
+ggplot(polosx, aes(numsbj,numprj)) + 
+    geom_point(aes(color = polo), show_guide = FALSE,
+    size = 8, alpha = 1/2) + 
+    geom_smooth(method=lm,   se=T) +
+    facet_grid(call ~ .) +
+    labs(title = "n.subjects per n.projects") +
+    geom_text(aes(label=polo), size=3) 
+
+ggsave(file="test.pdf")
+ggsave(file="prjsbj.jpeg", dpi=72)
 ### >>>>>> multiple plots in one graphic
 # define function to create multi-plot setup (nrow, ncol)
 
