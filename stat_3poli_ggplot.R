@@ -18,6 +18,24 @@ attrsbj<-read.table("attr_sbj.txt",
 head(attrsbj)
 str(attrsbj)
 
+###########################################################
+
+head(listpoli)
+hist(table(listpoli$sbj), breaks=100)
+table(table(listpoli$sbj))
+
+
+sbjtype<-sapply(listpoli$sbj, function (x) attrsbj$type[attrsbj$sbj==x]  ) 
+
+#  mytype<-lapply(listpoli$sbj, function (x) attrsbj[attrsbj$sbj==x,]  ) 
+str(sbjtype)
+
+lstpoli<-cbind(listpoli,sbjtype)
+head(lstpoli)
+str(lstpoli)
+#############################
+
+
 #################################################################
 qplot(polo, data=listpoli, fill=call)
 
@@ -53,6 +71,33 @@ ggplot(polosx, aes(numsbj,numprj)) +
 
 ggsave(file="test.pdf")
 ggsave(file="prjsbj.jpeg", dpi=72)
+
+ggplot(polosx, aes(numsbj,totfin/1000000)) + 
+    geom_point(aes(color = polo), show_guide = FALSE,
+               size = 8, alpha = 1/2) + 
+    geom_smooth(method=lm,   se=T) +
+    facet_grid(call ~ .) +
+    ggtitle("tot.funding per tot.subjects") +
+    ylab("Meuro") +
+    geom_text(aes(label=polo), size=3) 
+
+
+ggsave(file="fundsbj.jpeg", dpi=72)
+
+
+
+ggplot(polosx, aes(numprj,totfin/1000000)) + 
+    geom_point(aes(color = polo), show_guide = FALSE,
+               size = 10, alpha = 1/2) + 
+    geom_smooth(method=lm,   se=T) +
+    facet_grid(call ~ .) +
+    ggtitle("tot.funding per tot.projects") +
+    ylab("Meuro") +
+    geom_text(aes(label=polo), size=3) 
+
+
+ggsave(file="fundsbj.jpeg", dpi=72)
+
 ### >>>>>> multiple plots in one graphic
 # define function to create multi-plot setup (nrow, ncol)
 
@@ -156,21 +201,6 @@ print(p2, vp=vp.layout(2,1))
 
 dev.off()
 
-###########################################################
-
-head(listpoli)
-hist(table(listpoli$sbj), breaks=100)
-table(table(listpoli$sbj))
-
-
-sbjtype<-sapply(listpoli$sbj, function (x) attrsbj$type[attrsbj$sbj==x]  ) 
-
-#  mytype<-lapply(listpoli$sbj, function (x) attrsbj[attrsbj$sbj==x,]  ) 
-str(sbjtype)
-
-lstpoli<-cbind(listpoli,sbjtype)
-head(lstpoli)
-str(lstpoli)
 
 
 p1<-qplot(sbjtype, data=lstpoli, fill=call, 
@@ -314,12 +344,12 @@ dev.off()
 
 
 p1<-qplot(invest,fin, data=lstpoli, color=sbjtype,
-      geom="point", size=2,
+      geom="point", size=2, show_guide = FALSE,
       main=" funding/investment ratio distribution ")
 
 p2<-qplot(sbjtype, fin/invest,  data=lstpoli, fill=sbjtype, 
     geom="boxplot", 
-      main=" funding/investment ratio distribution ")
+      main=" funding /investment ratio distribution ")
 
 
 jpeg("basic_stat8.jpg",width = 600, height = 900, units = "px")
@@ -334,7 +364,20 @@ print(p2, vp=vp.layout(2,1))
 dev.off()
 
 
-str(sbjsx)
-factor(sbjsx$npart)
+###################################
 
-qplot(type, log(numprj), data=sbjsx, geom="boxplot")
+lstpoli_no<-lstpoli[!lstpoli$sbjtype=="OTH",]
+
+gg<-ggplot(lstpoli_no, aes(invest/1e+5,fin/1e+5)) + 
+    geom_point(aes(color = sbjtype), show_guide = F,
+               size = 3, alpha = 2/3) + 
+#    facet_wrap( ~ sbjtype, ncol=2) +
+#   geom_smooth(method=lm,   se=F) +
+    ggtitle("funding on investment distribution ")+
+    xlab("invest in M???") + ylab("funding in M???") 
+  
+
+gg + facet_wrap( ~ sbjtype, ncol=2) 
+
+ggsave(file="fund_inv.jpeg", dpi=72)
+
