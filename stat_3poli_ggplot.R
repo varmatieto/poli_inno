@@ -55,48 +55,8 @@ polosx<-ddply(listpoli, .(polo,call), summarise,
 str(polosx)
 head(polosx)
 
+###########################################################
 
-qplot(numsbj,numprj, data=polosx, color=call, 
-      geom=c("point", "smooth"), method="lm",
-      facets= call~., show_guide = FALSE,
-      main=" n.subjects per n.projects")
-
-ggplot(polosx, aes(numsbj,numprj)) + 
-    geom_point(aes(color = polo), show_guide = FALSE,
-    size = 8, alpha = 1/2) + 
-    geom_smooth(method=lm,   se=T) +
-    facet_grid(call ~ .) +
-    labs(title = "n.subjects per n.projects") +
-    geom_text(aes(label=polo), size=3) 
-
-ggsave(file="test.pdf")
-ggsave(file="prjsbj.jpeg", dpi=72)
-
-ggplot(polosx, aes(numsbj,totfin/1000000)) + 
-    geom_point(aes(color = polo), show_guide = FALSE,
-               size = 8, alpha = 1/2) + 
-    geom_smooth(method=lm,   se=T) +
-    facet_grid(call ~ .) +
-    ggtitle("tot.funding per tot.subjects") +
-    ylab("Meuro") +
-    geom_text(aes(label=polo), size=3) 
-
-
-ggsave(file="fundsbj.jpeg", dpi=72)
-
-
-
-ggplot(polosx, aes(numprj,totfin/1000000)) + 
-    geom_point(aes(color = polo), show_guide = FALSE,
-               size = 10, alpha = 1/2) + 
-    geom_smooth(method=lm,   se=T) +
-    facet_grid(call ~ .) +
-    ggtitle("tot.funding per tot.projects") +
-    ylab("Meuro") +
-    geom_text(aes(label=polo), size=3) 
-
-
-ggsave(file="fundsbj.jpeg", dpi=72)
 
 ### >>>>>> multiple plots in one graphic
 # define function to create multi-plot setup (nrow, ncol)
@@ -143,6 +103,106 @@ print(p3, vp=vp.layout(3,1))
 print(p4, vp=vp.layout(4,1))
 
 dev.off()
+
+################################################################
+p1<-ggplot(polosx, aes(call,npart)) + 
+    geom_boxplot(aes(fill = call), show_guide = FALSE) + 
+    ggtitle("n. participations per polo per call") 
+
+p2<-ggplot(polosx, aes(call,numprj)) + 
+    geom_boxplot(aes(fill = call), show_guide = FALSE) + 
+    ggtitle("n.projects per polo per call") 
+
+p3<-ggplot(polosx, aes(call,numsbj)) + 
+    geom_boxplot(aes(fill = call), show_guide = FALSE) + 
+    ggtitle("n.subjects per polo per call") 
+
+p4<-ggplot(polosx, aes(call,totfin)) + 
+    geom_boxplot(aes(fill = call), show_guide = FALSE) + 
+    ggtitle("tot_funding per polo per call") 
+
+jpeg("basic_stat01.jpg",width = 600, height = 900, units = "px")
+# pdf("polo_call1.pdf",paper=c("a4"))
+# par(mfrow=c(3,1)) 
+# setup multi plot with grid
+
+vp.setup(4,1)
+# plot graphics into layout
+print(p1, vp=vp.layout(1,1))
+print(p2, vp=vp.layout(2,1))
+print(p3, vp=vp.layout(3,1))
+print(p4, vp=vp.layout(4,1))
+
+dev.off()
+
+################################################################
+p1<-ggplot(polosx, aes(call,npart)) + 
+    geom_boxplot(aes(fill = call), show_guide = FALSE) + 
+    ggtitle("n. participations per polo per call") 
+
+p2<-ggplot(polosx, aes(call,numprj)) + 
+    geom_boxplot(aes(fill = call), show_guide = FALSE) + 
+    ggtitle("n.projects per polo per call") 
+
+p3<-ggplot(polosx, aes(call,numsbj)) + 
+    geom_boxplot(aes(fill = call), show_guide = FALSE) + 
+    ggtitle("n.subjects per polo per call") 
+
+p4<-ggplot(polosx, aes(call,totfin)) + 
+    geom_boxplot(aes(fill = call), show_guide = FALSE) + 
+    ggtitle("tot_funding per polo per call") 
+
+jpeg("basic_stat01.jpg",width = 600, height = 900, units = "px")
+# pdf("polo_call1.pdf",paper=c("a4"))
+# par(mfrow=c(3,1)) 
+# setup multi plot with grid
+
+vp.setup(4,1)
+# plot graphics into layout
+print(p1, vp=vp.layout(1,1))
+print(p2, vp=vp.layout(2,1))
+print(p3, vp=vp.layout(3,1))
+print(p4, vp=vp.layout(4,1))
+
+dev.off()
+
+################################################################
+p1<-ggplot(lstpoli, aes(call,log(invest))) + 
+    geom_boxplot(aes(fill = call), show_guide = FALSE) + 
+    ggtitle("investment distribution per call") 
+
+p2<-ggplot(lstpoli, aes(call,log(fin))) + 
+    geom_boxplot(aes(fill = call), show_guide = FALSE) + 
+    ggtitle("funding distribution per call") 
+
+
+jpeg("basic_stat02.jpg",width = 480, height = 600, units = "px")
+# pdf("polo_call1.pdf",paper=c("a4"))
+# par(mfrow=c(3,1)) 
+# setup multi plot with grid
+
+vp.setup(2,1)
+# plot graphics into layout
+print(p1, vp=vp.layout(1,1))
+print(p2, vp=vp.layout(2,1))
+
+
+dev.off()
+######################################################
+
+
+ggplot(polosx, aes(numprj,totfin/1000000)) + 
+    geom_point(aes(color = polo), show_guide = FALSE,
+               size = 10, alpha = 1/2) + 
+    geom_smooth(method=lm,   se=T) +
+    facet_grid(call ~ .) +
+    ggtitle("tot.funding per tot.projects") +
+    ylab("Meuro") +
+    geom_text(aes(label=polo), size=3) 
+
+
+ggsave(file="fundsbj.jpeg", dpi=72)
+###############################################
 
 p1 <-qplot(polo,npart, data=polosx, fill=call, 
            facets= call~., show_guide = FALSE,
@@ -381,3 +441,16 @@ gg + facet_wrap( ~ sbjtype, ncol=2)
 
 ggsave(file="fund_inv.jpeg", dpi=72)
 
+####################################
+
+lstpoli_h<-lstpoli[lstpoli$sbjtype=="UNI",]
+
+ggplot(lstpoli_h, aes(invest/1e+5,fin/1e+5)) + 
+    geom_point(aes(color = sbjtype), show_guide = F,
+               size = 3, alpha = 2/3) + 
+    #    facet_wrap( ~ sbjtype, ncol=2) +
+       geom_smooth(method=lm,   se=T) +
+    ggtitle("University funding on investment distribution ")+
+    xlab("invest in M???") + ylab("funding in M???") 
+
+ggsave(file="fund_inv_UNI.jpeg", dpi=72)
